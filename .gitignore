@@ -122,8 +122,8 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-venv-ecomerce_MDI/
-venv-ecomerce_MDI
+venv-ecommerce_MDI/
+venv-ecommerce_MDI
 .env
 .venv
 env/
