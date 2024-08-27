@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Venda - Batcaverna</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1e1e1e; /* Fundo escuro */
+            color: #e0e0e0; /* Texto claro */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Altura da tela */
+            text-align: center;
+        }
+        form {
+            display: inline-block;
+            padding: 20px;
+            border: 1px solid #0a74da; /* Cor da borda */
+            border-radius: 10px;
+            background-color: #2b2b2b; /* Fundo do formulário */
+            max-width: 500px; /* Largura máxima do formulário */
+            width: 100%; /* Ajusta a largura do formulário */
+        }
+        input, textarea {
+            display: block;
+            width: calc(100% - 22px); /* Ajusta a largura para levar em conta o padding e a borda */
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #0a74da; /* Cor da borda dos campos */
+            border-radius: 5px;
+            background-color: #333333; /* Fundo dos campos */
+            color: #e0e0e0; /* Texto dos campos */
+        }
+        textarea {
+            height: 100px;
+        }
+        input[type="submit"] {
+            background-color: #0a74da; /* Cor do botão */
+            color: #e0e0e0; /* Cor do texto do botão */
+            cursor: pointer;
+            border: none; /* Remove a borda padrão do botão */
+            padding: 10px 20px; /* Padding para aumentar o tamanho do botão */
+            border-radius: 5px; /* Arredonda os cantos do botão */
+        }
+        input[type="submit"]:hover {
+            background-color: #005b99; /* Cor do botão ao passar o mouse */
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <form action="{% url 'Batcaverna' %}" method="post">
+        {% csrf_token %}
+        <label for="nome">Nome:</label>
+        <input type="text" name="nome" id="nome" required>
+        <label for="cliente">Cliente:</label>
+        <input type="text" name="cliente" id="cliente" required>
+        <label for="valor">Valor da Venda:</label>
+        <input type="number" name="valor" id="valor" step="0.01" required>
+        <label for="mensagem">Mensagem:</label>
+        <textarea name="mensagem" id="mensagem" required></textarea>
+        <input type="submit" value="Enviar">
+    </form>
+</body>
+</html>

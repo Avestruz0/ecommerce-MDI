@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes da Venda - Batcaverna</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1e1e1e; /* Fundo escuro */
+            color: #e0e0e0; /* Texto claro */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Altura da tela */
+            text-align: center;
+        }
+        .content {
+            display: inline-block;
+            padding: 20px;
+            border: 1px solid #0a74da; /* Cor da borda */
+            border-radius: 10px;
+            background-color: #2b2b2b; /* Fundo do conteúdo */
+            max-width: 600px; /* Largura máxima do conteúdo */
+            width: 100%; /* Ajusta a largura do conteúdo */
+        }
+        .header {
+            font-size: 2em;
+            color: #0a74da; /* Azul do tema */
+            margin-bottom: 20px;
+        }
+        .details {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        .details span {
+            font-weight: bold;
+        }
+        .message {
+            font-size: 1.2em;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #0a74da;
+            border-radius: 5px;
+            background-color: #333333; /* Fundo da mensagem */
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div class="header">Detalhes da Venda</div>
+        <div class="details"><span>Nome:</span> {{ nome }}</div>
+        <div class="details"><span>Cliente:</span> {{ cliente }}</div>
+        <div class="details"><span>Valor da Venda:</span> R$ {{ valor }}</div>
+        <div class="message">{{ mensagem }}</div>
+    </div>
+</body>
+</html>
