@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Produto - Batcaverna</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1e1e1e; /* Fundo escuro */
+            color: #e0e0e0; /* Texto claro */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Altura da tela */
+            text-align: center;
+            flex-direction: column; /* Para alinhar o formulário e a lista verticalmente */
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 800px; /* Largura máxima do container */
+        }
+        form, .list {
+            padding: 20px;
+            border: 1px solid #0a74da; /* Cor da borda */
+            border-radius: 10px;
+            background-color: #2b2b2b; /* Fundo do formulário */
+            width: 100%; /* Ajusta a largura do formulário */
+            margin-bottom: 20px; /* Espaçamento entre o formulário e a lista */
+        }
+        input, textarea {
+            display: block;
+            width: calc(100% - 22px); /* Ajusta a largura para levar em conta o padding e a borda */
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #0a74da; /* Cor da borda dos campos */
+            border-radius: 5px;
+            background-color: #333333; /* Fundo dos campos */
+            color: #e0e0e0; /* Texto dos campos */
+        }
+        textarea {
+            height: 100px;
+        }
+        input[type="submit"], button {
+            background-color: #0a74da; /* Cor do botão */
+            color: #e0e0e0; /* Cor do texto do botão */
+            cursor: pointer;
+            border: none; /* Remove a borda padrão do botão */
+            padding: 10px 20px; /* Padding para aumentar o tamanho do botão */
+            border-radius: 5px; /* Arredonda os cantos do botão */
+        }
+        input[type="submit"]:hover, button:hover {
+            background-color: #005b99; /* Cor do botão ao passar o mouse */
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        .list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .list li {
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centraliza horizontalmente */
+            text-align: center; /* Centraliza o texto */
+        }
+        .button-group {
+            display: flex;
+            gap: 10px; /* Espaço entre os botões */
+        }
+        .list button {
+            background-color: #e04d4d; /* Cor do botão de exclusão */
+        }
+        .list button:hover {
+            background-color: #c0392b; /* Cor do botão de exclusão ao passar o mouse */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="produtoForm">
+            <label for="nome">Nome:</label>
+            <input type="text" name="nome" id="nome" required>
+            <label for="descricao">Descrição:</label>
+            <textarea name="descricao" id="descricao" required></textarea>
+            <label for="preco">Preço:</label>
+            <input type="number" name="preco" id="preco" step="0.01" required>
+            <input type="submit" value="Adicionar Produto">
+        </form>
+        <div class="list">
+            <h2>Lista de Produtos</h2>
+            <ul id="produtoList"></ul>
+        </div>
+    </div>
+    <script>
+        const produtoForm = document.getElementById('produtoForm');
+        const produtoList = document.getElementById('produtoList');
+        let produtos = [];
+        let editId = null;
+
+        produtoForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(produtoForm);
+            const produto = {
+                id: editId || Date.now(),
+                nome: formData.get('nome'),
+                descricao: formData.get('descricao'),
+                preco: formData.get('preco')
+            };
+            if (editId) {
+                produtos = produtos.map(p => p.id === editId ? produto : p);
+                editId = null;
+            } else {
+                produtos.push(produto);
+            }
+            renderProdutos();
+            produtoForm.reset();
+        });
+
+        function renderProdutos() {
+            produtoList.innerHTML = '';
+            produtos.forEach(produto => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>Nome:</strong> ${produto.nome}<br>
+                    <strong>Descrição:</strong> ${produto.descricao}<br>
+                    <strong>Preço:</strong> ${produto.preco}<br>
+                    <div class="button-group">
+                        <button onclick="editProduto(${produto.id})">Editar</button>
+                        <button onclick="deleteProduto(${produto.id})">Excluir</button>
+                    </div>
+                `;
+                produtoList.appendChild(li);
+            });
+        }
+
+        function deleteProduto(id) {
+            produtos = produtos.filter(produto => produto.id !== id);
+            renderProdutos();
+        }
+
+        function editProduto(id) {
+            const produto = produtos.find(produto => produto.id === id);
+            document.getElementById('nome').value = produto.nome;
+            document.getElementById('descricao').value = produto.descricao;
+            document.getElementById('preco').value = produto.preco;
+            editId = id;
+        }
+    </script>
+</body>
+</html>

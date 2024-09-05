@@ -21,3 +21,7 @@ def Batcaverna(request):
 
 def formulario(request):
     return render(request, 'formulario.html')
+
+
+def criacao_produto(request):
+    return render(request, 'criacao_produto.html')

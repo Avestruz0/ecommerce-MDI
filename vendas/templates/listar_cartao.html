@@ -1,0 +1,28 @@
+{% extends "main.html" %}
+
+<!-- Definindo o título da página  -->
+{% block title %}
+Listar Cartões
+{% endblock %}
+
+{% block titulo %}
+Lista de Cartões
+{% endblock %}
+
+{% block conteudo %}
+<a href="/formulario_post/">Cria novo cartão + </a>
+
+{% for Batcaverna in batcartoes %}
+<fieldset>
+    <legend>Mensagem {{Batcaverna.id}}</legend>
+    <a href="/deletar/{{Batcaverna.id}}">Deletar cartão</a>
+    <a href="/atualizar/{{Batcaverna.id}}">Atualizar cartão</a>
+    {{Batcaverna.nome}}
+    <br>
+    {{Batcaverna.remetente}}
+    <br>
+    {{Batcaverna.mensagem}}
+</fieldset>
+{% endfor %}
+
+{% endblock %}
