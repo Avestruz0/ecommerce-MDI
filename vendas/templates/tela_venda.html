@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tela de Vendas</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1e1e1e; /* Fundo escuro */
+            color: #e0e0e0; /* Texto claro */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Altura da tela */
+            text-align: center;
+            flex-direction: column; /* Para alinhar o formulário e a lista verticalmente */
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 800px; /* Largura máxima do container */
+        }
+        form, .list {
+            padding: 20px;
+            border: 1px solid #0a74da; /* Cor da borda */
+            border-radius: 10px;
+            background-color: #2b2b2b; /* Fundo do formulário */
+            width: 100%; /* Ajusta a largura do formulário */
+            margin-bottom: 20px; /* Espaçamento entre o formulário e a lista */
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input, textarea {
+            display: block;
+            width: calc(100% - 22px); /* Ajusta a largura para levar em conta o padding e a borda */
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #0a74da; /* Cor da borda dos campos */
+            border-radius: 5px;
+            background-color: #333333; /* Fundo dos campos */
+            color: #e0e0e0; /* Texto dos campos */
+        }
+        textarea {
+            height: 100px;
+        }
+        input[type="submit"], button {
+            background-color: #0a74da; /* Cor do botão */
+            color: #e0e0e0; /* Cor do texto do botão */
+            cursor: pointer;
+            border: none; /* Remove a borda padrão do botão */
+            padding: 10px 20px; /* Padding para aumentar o tamanho do botão */
+            border-radius: 5px; /* Arredonda os cantos do botão */
+            margin: 5px; /* Margem para espaçar os botões */
+        }
+        input[type="submit"]:hover, button:hover {
+            background-color: #005b99; /* Cor do botão ao passar o mouse */
+        }
+        .list h2 {
+            margin-top: 0;
+        }
+        .list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .list li {
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centraliza horizontalmente */
+            text-align: center; /* Centraliza o texto */
+            background-color: #2b2b2b; /* Fundo dos itens da lista */
+        }
+        .list .button-group {
+            display: flex;
+            gap: 10px; /* Espaço entre os botões */
+        }
+        .list button {
+            background-color: #e04d4d; /* Cor do botão de exclusão */
+        }
+        .list button:hover {
+            background-color: #c0392b; /* Cor do botão de exclusão ao passar o mouse */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="vendaForm">
+            <label for="nome">Nome do Cliente:</label>
+            <input type="text" name="nome" id="nome" required>
+            <label for="produto">Produto:</label>
+            <input type="text" name="produto" id="produto" required>
+            <label for="valor">Valor da Venda:</label>
+            <input type="number" name="valor" id="valor" step="0.01" required>
+            <label for="descricao">Descrição:</label>
+            <textarea name="descricao" id="descricao" required></textarea>
+            <input type="submit" value="Adicionar Venda">
+        </form>
+        <div class="list">
+            <h2>Lista de Vendas</h2>
+            <ul id="vendaList"></ul>
+        </div>
+    </div>
+    <script>
+        const vendaForm = document.getElementById('vendaForm');
+        const vendaList = document.getElementById('vendaList');
+        let vendas = [];
+        let editId = null;
+
+        vendaForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(vendaForm);
+            const venda = {
+                id: editId || Date.now(),
+                nome: formData.get('nome'),
+                produto: formData.get('produto'),
+                valor: parseFloat(formData.get('valor')),
+                descricao: formData.get('descricao')
+            };
+            if (editId) {
+                vendas = vendas.map(v => v.id === editId ? venda : v);
+                editId = null;
+            } else {
+                vendas.push(venda);
+            }
+            renderVendas();
+            vendaForm.reset();
+        });
+
+        function renderVendas() {
+            vendaList.innerHTML = '';
+            vendas.forEach(venda => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>Nome do Cliente:</strong> ${venda.nome}<br>
+                    <strong>Produto:</strong> ${venda.produto}<br>
+                    <strong>Valor:</strong> R$ ${venda.valor.toFixed(2)}<br>
+                    <strong>Descrição:</strong> ${venda.descricao}<br>
+                    <div class="button-group">
+                        <button onclick="editVenda(${venda.id})">Editar</button>
+                        <button onclick="deleteVenda(${venda.id})">Excluir</button>
+                    </div>
+                `;
+                vendaList.appendChild(li);
+            });
+        }
+
+        function deleteVenda(id) {
+            vendas = vendas.filter(venda => venda.id !== id);
+            renderVendas();
+        }
+
+        function editVenda(id) {
+            const venda = vendas.find(venda => venda.id === id);
+            document.getElementById('nome').value = venda.nome;
+            document.getElementById('produto').value = venda.produto;
+            document.getElementById('valor').value = venda.valor;
+            document.getElementById('descricao').value = venda.descricao;
+            editId = id;
+        }
+    </script>
+</body>
+</html>
