@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Produto - Batcaverna</title>
+    <title>Cadastro de Venda - Batcaverna</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -16,22 +16,16 @@
             align-items: center;
             height: 100vh; /* Altura da tela */
             text-align: center;
-            flex-direction: column; /* Para alinhar o formulário e a lista verticalmente */
         }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 800px; /* Largura máxima do container */
-        }
-        form, .list {
+        form {
+            display: inline-block;
             padding: 20px;
             border: 1px solid #0a74da; /* Cor da borda */
             border-radius: 10px;
             background-color: #2b2b2b; /* Fundo do formulário */
+            max-width: 500px; /* Largura máxima do formulário */
             width: 100%; /* Ajusta a largura do formulário */
-            margin-bottom: 20px; /* Espaçamento entre o formulário e a lista */
+            box-sizing: border-box; /* Inclui padding e border na largura total */
         }
         input, textarea {
             display: block;
@@ -46,7 +40,7 @@
         textarea {
             height: 100px;
         }
-        input[type="submit"], button {
+        input[type="submit"] {
             background-color: #0a74da; /* Cor do botão */
             color: #e0e0e0; /* Cor do texto do botão */
             cursor: pointer;
@@ -54,7 +48,7 @@
             padding: 10px 20px; /* Padding para aumentar o tamanho do botão */
             border-radius: 5px; /* Arredonda os cantos do botão */
         }
-        input[type="submit"]:hover, button:hover {
+        input[type="submit"]:hover {
             background-color: #005b99; /* Cor do botão ao passar o mouse */
         }
         label {
@@ -62,101 +56,66 @@
             margin: 10px 0 5px;
             font-weight: bold;
         }
-        .list ul {
-            list-style: none;
-            padding: 0;
-        }
-        .list li {
+        .file-input-container {
             margin: 10px 0;
-            padding: 15px;
-            border: 1px solid #333;
+        }
+        .file-input-container input[type="file"] {
+            display: block;
+            padding: 0;
+            border: none; /* Remove a borda padrão do input de arquivo */
+        }
+        .image-preview {
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+        }
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px; /* Altura máxima da imagem */
             border-radius: 5px;
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Centraliza horizontalmente */
-            text-align: center; /* Centraliza o texto */
-        }
-        .button-group {
-            display: flex;
-            gap: 10px; /* Espaço entre os botões */
-        }
-        .list button {
-            background-color: #e04d4d; /* Cor do botão de exclusão */
-        }
-        .list button:hover {
-            background-color: #c0392b; /* Cor do botão de exclusão ao passar o mouse */
+            border: 1px solid #0a74da; /* Cor da borda da imagem */
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <form id="produtoForm">
-            <label for="nome">Nome:</label>
-            <input type="text" name="nome" id="nome" required>
-            <label for="descricao">Descrição:</label>
-            <textarea name="descricao" id="descricao" required></textarea>
-            <label for="preco">Preço:</label>
-            <input type="number" name="preco" id="preco" step="0.01" required>
-            <input type="submit" value="Adicionar Produto">
-        </form>
-        <div class="list">
-            <h2>Lista de Produtos</h2>
-            <ul id="produtoList"></ul>
+    <form action="{% url 'Batcaverna' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="nome">Nome:</label>
+        <input type="text" name="nome" id="nome" required>
+        <label for="cliente">Cliente:</label>
+        <input type="text" name="cliente" id="cliente" required>
+        <label for="valor">Valor da Venda:</label>
+        <input type="number" name="valor" id="valor" step="0.01" required>
+        <label for="mensagem">Mensagem:</label>
+        <textarea name="mensagem" id="mensagem" required></textarea>
+        <label for="imagem">Imagem do Produto:</label>
+        <div class="file-input-container">
+            <input type="file" name="imagem" id="imagem" accept="image/*" onchange="previewImage()">
         </div>
-    </div>
+        <div class="image-preview" id="imagePreview"></div>
+        <input type="submit" value="Enviar">
+    </form>
+
     <script>
-        const produtoForm = document.getElementById('produtoForm');
-        const produtoList = document.getElementById('produtoList');
-        let produtos = [];
-        let editId = null;
+        function previewImage() {
+            const fileInput = document.getElementById('imagem');
+            const previewContainer = document.getElementById('imagePreview');
 
-        produtoForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(produtoForm);
-            const produto = {
-                id: editId || Date.now(),
-                nome: formData.get('nome'),
-                descricao: formData.get('descricao'),
-                preco: formData.get('preco')
-            };
-            if (editId) {
-                produtos = produtos.map(p => p.id === editId ? produto : p);
-                editId = null;
-            } else {
-                produtos.push(produto);
+            // Limpa a visualização atual
+            previewContainer.innerHTML = '';
+
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    previewContainer.appendChild(img);
+                }
+
+                reader.readAsDataURL(file);
             }
-            renderProdutos();
-            produtoForm.reset();
-        });
-
-        function renderProdutos() {
-            produtoList.innerHTML = '';
-            produtos.forEach(produto => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <strong>Nome:</strong> ${produto.nome}<br>
-                    <strong>Descrição:</strong> ${produto.descricao}<br>
-                    <strong>Preço:</strong> ${produto.preco}<br>
-                    <div class="button-group">
-                        <button onclick="editProduto(${produto.id})">Editar</button>
-                        <button onclick="deleteProduto(${produto.id})">Excluir</button>
-                    </div>
-                `;
-                produtoList.appendChild(li);
-            });
-        }
-
-        function deleteProduto(id) {
-            produtos = produtos.filter(produto => produto.id !== id);
-            renderProdutos();
-        }
-
-        function editProduto(id) {
-            const produto = produtos.find(produto => produto.id === id);
-            document.getElementById('nome').value = produto.nome;
-            document.getElementById('descricao').value = produto.descricao;
-            document.getElementById('preco').value = produto.preco;
-            editId = id;
         }
     </script>
 </body>
