@@ -25,3 +25,6 @@ def formulario(request):
 
 def criacao_produto(request):
     return render(request, 'criacao_produto.html')
+
+def tela_venda(request):
+    return render(request, 'tela_venda.html')
