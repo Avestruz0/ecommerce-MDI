@@ -1,5 +1,11 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse # type: ignore
+from django.shortcuts import render, get_object_or_404 # type: ignore
+from .models import Cartao
+
+def detalhes_cartao(request, id):
+    cartao = get_object_or_404(Cartao, id=id)
+    return render(request, 'detalhes_cartao.html', {'cartao': cartao})
+
 
 def pagina1(request):
     return HttpResponse("Olá Mundo")

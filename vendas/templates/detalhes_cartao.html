@@ -1,0 +1,13 @@
+{% extends "main.html" %}
+
+{% block title %}
+Detalhes do Cartão
+{% endblock %}
+
+{% block conteudo %}
+<h1>Detalhes do Cartão</h1>
+<p><strong>Nome:</strong> {{ cartao.nome }}</p>
+<p><strong>Remetente:</strong> {{ cartao.remetente }}</p>
+<p><strong>Mensagem:</strong> {{ cartao.mensagem }}</p>
+<a href="{% url 'Batcaverna' %}">Voltar à lista de cartões</a>
+{% endblock %}
